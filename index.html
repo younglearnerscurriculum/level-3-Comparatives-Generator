@@ -11,11 +11,7 @@
       display: flex; justify-content: center; align-items: center;
       flex-direction: column;
     }
-    h1 {
-      color: #2a6592;
-      font-size: 24px;
-      margin: 10px 0;
-    }
+    h1 { color: #2a6592; font-size: 24px; margin: 10px 0; }
     button {
       background: #2a6592; color: white;
       border: none; padding: 10px 18px;
@@ -23,19 +19,20 @@
       cursor: pointer; margin: 5px;
     }
     button:hover { background: #1d4663; }
-    #quiz { margin-top: 20px; width: 90%; max-width: 800px; }
+    #quiz { margin-top: 20px; width: 90%; max-width: 900px; }
     .question { margin: 12px 0; padding: 12px; background: #fff; border-radius: 6px; }
     .answers { margin-top: 5px; }
     .answers button { margin: 3px; background: #eee; color: #333; }
     .answers button.correct { background: #90ee90 !important; }
     .answers button.wrong { background: #ff9999 !important; }
+    .clue { font-size: 13px; color: #555; margin-top: 4px; font-style: italic; }
     footer { margin-top: 20px; font-size: 12px; color: #555; }
   </style>
 </head>
 <body>
 
   <h1>🔮 Comparatives & Superlatives Quiz</h1>
-  <div>
+  <div id="level-select">
     <button onclick="loadLevel('easy')">Easy</button>
     <button onclick="loadLevel('normal')">Normal</button>
     <button onclick="loadLevel('hard')">Hard</button>
@@ -47,35 +44,40 @@
   <script>
     const questions = {
       easy: [
-        "Pizza is [better] than broccoli.",
-        "Monday is the [worst] day of the week.",
-        "Everest is the [highest] mountain in the world.",
-        "Ten dollars is [less] than twenty.",
-        "This road is [farther] than that one.",
-        "Today is the [best] day!"
+        {q:"Pizza is [better] than broccoli.", clue:"Think: good → better → best"},
+        {q:"Monday is the [worst] day of the week.", clue:"Think: bad → worse → worst"},
+        {q:"Everest is the [highest] mountain in the world.", clue:"Superlative form of high"},
+        {q:"Ten dollars is [less] than twenty.", clue:"Think: little → less → least"},
+        {q:"This road is [farther] than that one.", clue:"Think: far → farther → farthest"},
+        {q:"Today is the [best] day!", clue:"Opposite of worst"}
       ],
       normal: [
-        "Which is the [worst] subject at school for you? {Math | [History] | PE}",
-        "Summer vacation is [longer], but winter break is the [shortest].",
-        "Tom’s grade was [better] than Mia’s.",
-        "Paris is [farther] from New York than London is.",
-        "Which snack has [less] sugar? {Cake | [Fruit] | Soda}",
-        "This is the [most] exciting holiday of the year."
+        {q:"Which is the [worst] subject at school? {Math | [History] | PE}", clue:"bad → worse → worst"},
+        {q:"Summer vacation is [longer], but winter break is the [shortest].", clue:"long → longer → longest"},
+        {q:"Tom’s grade was [better] than Mia’s.", clue:"good → better → best"},
+        {q:"Paris is [farther] from New York than London is.", clue:"far → farther → farthest"},
+        {q:"Which snack has [less] sugar? {Cake | [Fruit] | Soda}", clue:"little → less → least"},
+        {q:"This is the [most] exciting holiday of the year.", clue:"many/much → more → most"}
       ],
       hard: [
-        "The Sahara is [farther] from Europe than the Amazon.",
-        "My phone is [less] useful without the internet.",
-        "Which of these is the [worst] invention? {Books | [Spam email] | Medicine}",
-        "The movie sequel was [better] than the first film.",
-        "Everest is the [farthest] climb most climbers dream of.",
-        "Out of all the teams, ours had the [most] energy."
+        {q:"The Sahara is [farther] from Europe than the Amazon.", clue:"far → farther → farthest"},
+        {q:"My phone is [less] useful without the internet.", clue:"little → less → least"},
+        {q:"Which of these is the [worst] invention? {Books | [Spam email] | Medicine}", clue:"bad → worse → worst"},
+        {q:"The movie sequel was [better] than the first film.", clue:"good → better → best"},
+        {q:"Everest is the [farthest] climb most climbers dream of.", clue:"far → farther → farthest"},
+        {q:"Out of all the teams, ours had the [most] energy.", clue:"many/much → more → most"}
       ]
     };
 
     function loadLevel(level) {
+      // Hide level selection
+      document.getElementById("level-select").style.display = "none";
+
       const quizDiv = document.getElementById("quiz");
       quizDiv.innerHTML = `<h2>${level.toUpperCase()} Level</h2>`;
-      questions[level].forEach(line => {
+      questions[level].forEach(item => {
+        const line = item.q;
+        const clue = item.clue;
         const qDiv = document.createElement("div");
         qDiv.className = "question";
         const [stem, rest] = line.split("{");
@@ -121,6 +123,12 @@
           };
           qDiv.appendChild(inputBox);
         }
+        // Add clue under each question
+        const c = document.createElement("div");
+        c.className = "clue";
+        c.textContent = "💡 Clue: " + clue;
+        qDiv.appendChild(c);
+
         quizDiv.appendChild(qDiv);
       });
     }
